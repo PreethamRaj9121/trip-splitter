@@ -3,160 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Splitter (Advanced)</title>
+    <title>Trip Splitter (Detailed Stats)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6c5ce7; /* Modern Purple */
-            --secondary: #a29bfe;
+            --primary: #0984e3;
             --dark: #2d3436;
             --bg: #dfe6e9;
             --card-bg: #ffffff;
             --text: #2d3436;
             --danger: #d63031;
             --success: #00b894;
+            --warning: #fdcb6e;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .container { max-width: 850px; margin: 0 auto; }
-
+        
         /* Header */
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { margin-bottom: 5px; color: var(--dark); }
-        .reset-btn {
-            background: none; border: 1px solid var(--danger); color: var(--danger);
-            padding: 5px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 4px;
-        }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { margin: 10px 0; color: var(--dark); }
 
-        /* Layout */
+        /* STATS BADGES */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            background-color: var(--dark);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 140px;
+            max-width: 250px;
+        }
+        .stat-badge small { display: block; color: #b2bec3; font-size: 0.8rem; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px;}
+        .stat-badge span { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
+        .stat-badge.secondary span { color: var(--success); }
+
+        /* Share Section */
+        .share-section { background: #ffeaa7; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid var(--warning); }
+        .share-btn { background: var(--primary); color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: 600; }
+        textarea { width: 100%; height: 60px; margin-top: 10px; font-family: monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; padding: 5px; }
+
+        /* Grid & Cards */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Inputs */
+        input, select { width: 100%; padding: 10px; border: 1px solid #b2bec3; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        button { border:none; cursor: pointer; transition: 0.2s; border-radius: 4px;}
+        .btn-main { background: var(--primary); width: 100%; padding: 12px; font-weight: bold; color: white; }
+        .btn-add { background: var(--success); color: white; padding: 0 15px; }
 
-        /* Cards */
-        .card {
-            background: var(--card-bg); padding: 20px; border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h2 { font-size: 1.1rem; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; margin-top: 0; color: #636e72; }
-
-        /* Inputs & Buttons */
-        input, select {
-            width: 100%; padding: 10px; border: 1px solid #b2bec3; border-radius: 6px;
-            font-size: 1rem; box-sizing: border-box; margin-bottom: 10px;
-        }
-        label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; color: #636e72; }
-
-        button { border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-add { background-color: var(--primary); color: white; padding: 0 20px; }
-        .btn-submit { background-color: var(--primary); color: white; width: 100%; padding: 12px; font-size: 1rem; margin-top: 10px; }
-        .btn-submit:hover { background-color: #5849be; }
-
-        /* Friend Tags */
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tag {
-            background-color: #f1f2f6; padding: 6px 14px; border-radius: 20px;
-            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
-        }
-        .tag i { color: #b2bec3; cursor: pointer; }
-        .tag i:hover { color: var(--danger); }
-
-        /* Checkbox Custom Styling for Split Logic */
-        .split-options {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;
-            margin-bottom: 15px; border: 1px solid #f1f2f6; padding: 10px; border-radius: 6px;
-        }
-        .checkbox-label {
-            display: flex; align-items: center; gap: 5px; font-size: 0.9rem; cursor: pointer;
-            user-select: none;
-        }
-        .checkbox-label input { width: auto; margin: 0; }
-
-        /* Expense List */
-        .expense-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
-        .expense-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px; border-bottom: 1px solid #f1f2f6;
-        }
-        .expense-info small { display: block; color: #b2bec3; font-size: 0.8rem; }
-
+        /* Tags & Lists */
+        .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .tag { background: #f1f2f6; padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; display: flex; align-items: center; gap:5px;}
+        .expense-list { list-style: none; padding: 0; max-height: 250px; overflow-y: auto; }
+        .expense-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        
         /* Settlement */
-        .settlement-box { border-left: 5px solid var(--success); background-color: #f0fdf4; }
-        .settlement-item { padding: 10px 0; border-bottom: 1px dashed #ced6e0; font-size: 1.05rem; }
-        .settlement-item:last-child { border-bottom: none; }
-        .settlement-item strong { color: var(--danger); }
-        .settlement-item span { color: var(--success); font-weight: bold; }
-        .empty-msg { text-align: center; color: #b2bec3; font-style: italic; margin-top: 10px; }
+        .settlement-box { border-left: 5px solid var(--success); background: #f0fdf4; }
+        .settlement-item { padding: 8px 0; border-bottom: 1px dashed #ccc; }
+        
+        /* Breakdown List */
+        .breakdown-list { list-style: none; padding: 0; }
+        .breakdown-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .breakdown-item span { font-weight: bold; color: #555; }
+
+        /* Split Checkboxes */
+        .split-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 5px; margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 6px; }
+        .checkbox-lbl { font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1><i class="fa-solid fa-indian-rupee-sign"></i> Trip Splitter</h1>
-        <button class="reset-btn" onclick="resetAll()">Reset All Data</button>
+        <h1><i class="fa-solid fa-plane-departure"></i> Trip Splitter</h1>
+        
+        <!-- NEW: Detailed Stats Section -->
+        <div class="stats-container">
+            <div class="stat-badge">
+                <small>Total Trip Cost</small>
+                <span id="totalTripDisplay">₹0.00</span>
+            </div>
+            <div class="stat-badge secondary">
+                <small>Average Cost / Person</small>
+                <span id="avgCostDisplay">₹0.00</span>
+            </div>
+        </div>
     </header>
 
+    <!-- Share Data -->
+    <div class="share-section">
+        <div style="font-weight:bold; margin-bottom:5px;">Sync Data</div>
+        <button class="share-btn" onclick="exportData()"><i class="fa-solid fa-copy"></i> Copy Data Code</button>
+        <button class="share-btn" style="background:#636e72;" onclick="toggleImport()"><i class="fa-solid fa-paste"></i> Paste Code</button>
+        
+        <div id="importArea" style="display:none; margin-top:10px;">
+            <textarea id="importString" placeholder="Paste the code here..."></textarea>
+            <button class="share-btn" style="background:var(--success); width:100%; margin: 5px 0;" onclick="importData()">Load Data</button>
+        </div>
+        <div>
+            <button class="share-btn" style="background:none; color:var(--danger); border:1px solid var(--danger); font-size:0.8rem; margin-top:10px;" onclick="resetAll()">Reset App</button>
+        </div>
+    </div>
+
     <div class="grid">
-        <!-- 1. Add Friends -->
+        <!-- 1. Add People -->
         <div class="card">
             <h2>1. Add People</h2>
             <div style="display: flex; gap: 10px;">
-                <input type="text" id="friendName" placeholder="Name (e.g. Rahul)" onkeypress="handleEnter(event)">
+                <input type="text" id="friendName" placeholder="Name" onkeypress="handleEnter(event)">
                 <button class="btn-add" onclick="addFriend()">Add</button>
             </div>
-            <div id="friendsContainer" class="tags">
-                <p class="empty-msg">No friends added yet.</p>
-            </div>
+            <div id="friendsContainer" class="tags"></div>
         </div>
 
         <!-- 2. Add Expense -->
         <div class="card">
             <h2>2. Add Expense</h2>
+            <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="amount" placeholder="₹ Amount">
+                <select id="payerSelect"><option>Select Payer</option></select>
+            </div>
             
-            <label>Description</label>
-            <input type="text" id="desc" placeholder="e.g. Dinner, Cab">
+            <label style="margin-top:10px;">Split amongst:</label>
+            <div id="splitOptions" class="split-options"></div>
 
-            <div style="display: flex; gap: 15px;">
-                <div style="flex:1;">
-                    <label>Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="0">
-                </div>
-                <div style="flex:1;">
-                    <label>Paid By</label>
-                    <select id="payerSelect">
-                        <option value="" disabled selected>Select...</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- New Feature: Split Selection -->
-            <label>Split amongst (Uncheck if not involved):</label>
-            <div id="splitOptions" class="split-options">
-                <p class="empty-msg" style="font-size: 0.8rem;">Add friends to see options</p>
-            </div>
-
-            <button class="btn-submit" onclick="addExpense()">Add Expense</button>
+            <button class="btn-main" onclick="addExpense()">Add Expense</button>
         </div>
     </div>
 
     <div class="grid">
-        <!-- 3. Expense Log -->
+        <!-- 3. History -->
         <div class="card">
             <h2>History</h2>
             <ul id="expenseList" class="expense-list"></ul>
         </div>
+        
+        <!-- 4. Settlement & Breakdown -->
+        <div>
+            <div class="card settlement-box" style="margin-bottom: 20px;">
+                <h2><i class="fa-solid fa-calculator"></i> Final Settlement</h2>
+                <div id="settlementList"></div>
+            </div>
 
-        <!-- 4. Settlement -->
-        <div class="card settlement-box">
-            <h2><i class="fa-solid fa-hand-holding-dollar"></i> Final Settlement</h2>
-            <div id="settlementList"></div>
+            <!-- NEW: Breakdown Card -->
+            <div class="card">
+                <h2><i class="fa-solid fa-chart-pie"></i> Cost Breakdown</h2>
+                <p style="font-size:0.8rem; color:#888; margin-top:0;">Net share of trip cost per person</p>
+                <ul id="breakdownList" class="breakdown-list"></ul>
+            </div>
         </div>
     </div>
 </div>
@@ -170,82 +178,79 @@
     renderAll();
 
     // --- Helpers ---
-    function handleEnter(e) {
-        if(e.key === 'Enter') addFriend();
+    function handleEnter(e) { if(e.key === 'Enter') addFriend(); }
+
+    // --- SHARE LOGIC ---
+    function exportData() {
+        const dataString = btoa(JSON.stringify({ friends, expenses }));
+        navigator.clipboard.writeText(dataString).then(() => alert("Data Code Copied! Send this to your friends."));
     }
 
-    // --- Core Logic ---
+    function toggleImport() {
+        const area = document.getElementById('importArea');
+        area.style.display = area.style.display === 'none' ? 'block' : 'none';
+    }
 
+    function importData() {
+        const str = document.getElementById('importString').value.trim();
+        if(!str) return alert("Paste a code first");
+        try {
+            const data = JSON.parse(atob(str));
+            if(confirm("Overwrite current data?")) {
+                friends = data.friends || [];
+                expenses = data.expenses || [];
+                saveAndRender();
+                alert("Data Loaded!");
+                document.getElementById('importArea').style.display = 'none';
+                document.getElementById('importString').value = '';
+            }
+        } catch (e) { alert("Invalid Code."); }
+    }
+
+    // --- APP LOGIC ---
     function addFriend() {
-        const input = document.getElementById('friendName');
-        const name = input.value.trim();
-        
-        if(!name) return alert("Please enter a name");
-        if(friends.includes(name)) return alert("Name already exists");
-
-        friends.push(name);
-        input.value = '';
-        saveAndRender();
+        const name = document.getElementById('friendName').value.trim();
+        if(name && !friends.includes(name)) {
+            friends.push(name);
+            document.getElementById('friendName').value = '';
+            saveAndRender();
+        }
     }
 
     function removeFriend(name) {
-        if(confirm(`Remove ${name}? This might mess up calculations if they are in existing expenses.`)) {
+        if(confirm(`Remove ${name}?`)) {
             friends = friends.filter(f => f !== name);
-            // Also clean up expenses where this person is the payer to avoid crash
-            expenses = expenses.filter(e => e.payer !== name);
             saveAndRender();
         }
     }
 
     function addExpense() {
-        const desc = document.getElementById('desc').value.trim();
+        const desc = document.getElementById('desc').value;
         const amount = parseFloat(document.getElementById('amount').value);
         const payer = document.getElementById('payerSelect').value;
+        const involved = [];
+        document.querySelectorAll('.split-chk').forEach(cb => { if(cb.checked) involved.push(cb.value); });
 
-        // Get all checked boxes for "Involved"
-        const checkboxes = document.querySelectorAll('.split-chk');
-        let involved = [];
-        checkboxes.forEach(cb => {
-            if(cb.checked) involved.push(cb.value);
-        });
+        if(!desc || !amount || !payer) return alert("Please fill details");
+        if(involved.length === 0) return alert("Select at least 1 person");
 
-        if(friends.length < 2) return alert("Add at least 2 friends first.");
-        if(!desc || !amount || !payer) return alert("Please fill description, amount and payer.");
-        if(involved.length === 0) return alert("At least one person must split the bill.");
-
-        const expense = {
-            id: Date.now(),
-            desc,
-            amount,
-            payer,
-            involved, // This is the new array storing who is actually part of this bill
-            date: new Date().toLocaleDateString()
-        };
-
-        expenses.push(expense);
+        expenses.push({ id: Date.now(), desc, amount, payer, involved, date: new Date().toLocaleDateString() });
         
-        // Reset Inputs
         document.getElementById('desc').value = '';
         document.getElementById('amount').value = '';
-        // We keep the Split Selection checked by default for UX
         document.querySelectorAll('.split-chk').forEach(cb => cb.checked = true);
-        
         saveAndRender();
     }
 
     function removeExpense(id) {
-        if(confirm("Delete this expense?")) {
+        if(confirm("Delete expense?")) {
             expenses = expenses.filter(e => e.id !== id);
             saveAndRender();
         }
     }
 
     function resetAll() {
-        if(confirm("Delete EVERYTHING?")) {
-            friends = [];
-            expenses = [];
-            saveAndRender();
-        }
+        if(confirm("Clear All Data?")) { friends = []; expenses = []; saveAndRender(); }
     }
 
     function saveAndRender() {
@@ -255,163 +260,112 @@
     }
 
     function renderAll() {
-        renderFriends(); // Also renders Payer Select and Split Options
-        renderExpenses();
+        // 1. Calculate Stats
+        const totalCost = expenses.reduce((sum, item) => sum + item.amount, 0);
+        const avgCost = friends.length > 0 ? (totalCost / friends.length) : 0;
+
+        document.getElementById('totalTripDisplay').innerText = `₹${totalCost.toFixed(2)}`;
+        document.getElementById('avgCostDisplay').innerText = `₹${avgCost.toFixed(2)}`;
+
+        // 2. Friends Tags
+        const fContainer = document.getElementById('friendsContainer');
+        fContainer.innerHTML = friends.map(f => 
+            `<div class="tag">${f} <i class="fa-solid fa-times" onclick="removeFriend('${f}')" style="cursor:pointer"></i></div>`
+        ).join('');
+
+        // 3. Payer Select
+        const pSelect = document.getElementById('payerSelect');
+        const currPayer = pSelect.value;
+        pSelect.innerHTML = '<option value="" disabled selected>Select Payer</option>' + 
+            friends.map(f => `<option value="${f}">${f}</option>`).join('');
+        if(friends.includes(currPayer)) pSelect.value = currPayer;
+
+        // 4. Checkboxes
+        const sOptions = document.getElementById('splitOptions');
+        if(friends.length > 0) {
+            sOptions.innerHTML = friends.map(f => 
+                `<label class="checkbox-lbl"><input type="checkbox" class="split-chk" value="${f}" checked>${f}</label>`
+            ).join('');
+        } else {
+            sOptions.innerHTML = '<small style="color:#888">Add friends first</small>';
+        }
+
+        // 5. Expense List
+        const eList = document.getElementById('expenseList');
+        eList.innerHTML = expenses.length ? '' : '<p style="text-align:center;color:#999">No expenses</p>';
+        expenses.slice().reverse().forEach(e => {
+            const count = (e.involved || friends).length;
+            eList.innerHTML += `
+                <li class="expense-item">
+                    <div><b>${e.desc}</b> <br> <small style="color:#777">Paid by ${e.payer} • ${count} ppl</small></div>
+                    <div style="text-align:right"><b>₹${e.amount}</b> <br> <i class="fa-solid fa-trash" style="color:#e17055; cursor:pointer" onclick="removeExpense(${e.id})"></i></div>
+                </li>`;
+        });
+
         calculateSplit();
     }
 
-    // --- Rendering ---
-
-    function renderFriends() {
-        const friendsContainer = document.getElementById('friendsContainer');
-        const payerSelect = document.getElementById('payerSelect');
-        const splitOptions = document.getElementById('splitOptions');
-
-        // 1. Tag List
-        if(friends.length === 0) {
-            friendsContainer.innerHTML = '<p class="empty-msg">No friends added yet.</p>';
-            splitOptions.innerHTML = '<p class="empty-msg" style="font-size: 0.8rem;">Add friends to see options</p>';
-        } else {
-            friendsContainer.innerHTML = '';
-            // 2. Split Options (Checkboxes)
-            splitOptions.innerHTML = ''; 
-        
-            friends.forEach(f => {
-                // Add Tag
-                friendsContainer.innerHTML += `
-                    <div class="tag">
-                        ${f} <i class="fa-solid fa-times" onclick="removeFriend('${f}')"></i>
-                    </div>`;
-
-                // Add Checkbox
-                // We default to CHECKED
-                splitOptions.innerHTML += `
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="split-chk" value="${f}" checked> ${f}
-                    </label>
-                `;
-            });
-        }
-
-        // 3. Payer Select Dropdown
-        const currentPayer = payerSelect.value;
-        payerSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
-        friends.forEach(f => {
-            payerSelect.innerHTML += `<option value="${f}">${f}</option>`;
-        });
-        if(friends.includes(currentPayer)) payerSelect.value = currentPayer;
-    }
-
-    function renderExpenses() {
-        const list = document.getElementById('expenseList');
-        if(expenses.length === 0) {
-            list.innerHTML = '<p class="empty-msg">No expenses yet.</p>';
-            return;
-        }
-
-        list.innerHTML = '';
-        expenses.slice().reverse().forEach(e => {
-            // Backward compatibility for old data that didn't have 'involved' array
-            const involvedCount = e.involved ? e.involved.length : friends.length;
-            const involvedText = (e.involved && e.involved.length < friends.length) 
-                                 ? `<br><span style="font-size:0.75rem; color:#6c5ce7;">(Split between ${e.involved.join(', ')})</span>` 
-                                 : '';
-
-            list.innerHTML += `
-                <li class="expense-item">
-                    <div class="expense-info">
-                        <span style="font-weight:600;">${e.desc}</span>
-                        <small>Paid by <strong>${e.payer}</strong> • ${e.date}${involvedText}</small>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:bold;">₹${e.amount.toFixed(2)}</div>
-                        <i class="fa-solid fa-trash" style="color:#d63031; cursor:pointer; font-size:0.8rem; margin-top:5px;" onclick="removeExpense(${e.id})"></i>
-                    </div>
-                </li>
-            `;
-        });
-    }
-
-    // --- The Algorithm (Handles Unequal Splits) ---
-
     function calculateSplit() {
-        const results = document.getElementById('settlementList');
-        if(expenses.length === 0 || friends.length < 2) {
-            results.innerHTML = '<p class="empty-msg">Add friends and expenses to calculate.</p>';
+        const sList = document.getElementById('settlementList');
+        const bList = document.getElementById('breakdownList');
+        
+        if(friends.length < 2 || expenses.length === 0) {
+            sList.innerHTML = '<p style="text-align:center;color:#999">Add data to calculate</p>';
+            bList.innerHTML = '<p style="text-align:center;color:#999">No data</p>';
             return;
         }
 
         let balances = {};
-        friends.forEach(f => balances[f] = 0);
+        let spending = {}; // New: Track actual consumption
+        friends.forEach(f => { balances[f] = 0; spending[f] = 0; });
 
         expenses.forEach(e => {
-            const paidBy = e.payer;
-            const amount = e.amount;
+            if(balances[e.payer] === undefined) return;
+            const involved = (e.involved || friends).filter(p => friends.includes(p));
+            if(involved.length === 0) return;
             
-            // Handle Edge Case: If payer was deleted, skip
-            if(balances[paidBy] === undefined) return;
+            const split = e.amount / involved.length;
 
-            // Handle Logic: "Involved" list
-            // If expense is from old version, assume everyone involved
-            const involvedPeople = e.involved || friends; 
+            balances[e.payer] += e.amount; // Payer Paid
             
-            // Filter involvedPeople to ensure they still exist in current friends list (in case someone was deleted)
-            const activeInvolved = involvedPeople.filter(p => friends.includes(p));
-            
-            if(activeInvolved.length === 0) return; // Prevent division by zero
-
-            const splitAmount = amount / activeInvolved.length;
-
-            // 1. Payer gets credit for full amount
-            balances[paidBy] += amount;
-
-            // 2. Subtract share ONLY from involved people
-            activeInvolved.forEach(person => {
-                balances[person] -= splitAmount;
+            involved.forEach(p => {
+                balances[p] -= split; // Person owes this amount
+                spending[p] += split; // Person "consumed" this amount
             });
         });
 
-        // Generate Debtors/Creditors
-        let debtors = [];
-        let creditors = [];
-
-        for(const person in balances) {
-            let val = Math.round(balances[person] * 100) / 100;
-            if(val < -0.01) debtors.push({ name: person, amount: val });
-            if(val > 0.01) creditors.push({ name: person, amount: val });
+        // Render Breakdown
+        let breakdownHTML = '';
+        for(const f of friends) {
+            breakdownHTML += `
+                <li class="breakdown-item">
+                    ${f} <span>₹${spending[f].toFixed(2)}</span>
+                </li>`;
         }
+        bList.innerHTML = breakdownHTML;
 
-        debtors.sort((a,b) => a.amount - b.amount); // Ascending (-100, -50)
-        creditors.sort((a,b) => b.amount - a.amount); // Descending (100, 50)
+        // Render Settlement
+        let debtors = [], creditors = [];
+        for(const p in balances) {
+            let val = Math.round(balances[p]*100)/100;
+            if(val < -0.01) debtors.push({n:p, a:val});
+            if(val > 0.01) creditors.push({n:p, a:val});
+        }
+        debtors.sort((a,b) => a.a - b.a);
+        creditors.sort((a,b) => b.a - a.a);
 
         let html = '';
-        let i = 0; 
-        let j = 0;
-
+        let i=0, j=0;
         while(i < debtors.length && j < creditors.length) {
-            let debtor = debtors[i];
-            let creditor = creditors[j];
-
-            let amount = Math.min(Math.abs(debtor.amount), creditor.amount);
-            
-            html += `
-                <div class="settlement-item">
-                    <strong>${debtor.name}</strong> owes 
-                    <span style="color:#2d3436;">${creditor.name}</span> 
-                    <span>₹${amount.toFixed(2)}</span>
-                </div>`;
-
-            debtor.amount += amount;
-            creditor.amount -= amount;
-
-            if(Math.abs(debtor.amount) < 0.01) i++;
-            if(creditor.amount < 0.01) j++;
+            let d = debtors[i], c = creditors[j];
+            let amt = Math.min(Math.abs(d.a), c.a);
+            html += `<div class="settlement-item"><strong>${d.n}</strong> owes <span style="color:var(--success)">${c.n}</span> <b>₹${amt.toFixed(2)}</b></div>`;
+            d.a += amt; c.a -= amt;
+            if(Math.abs(d.a)<0.01) i++;
+            if(c.a < 0.01) j++;
         }
-
-        if(!html) results.innerHTML = '<p class="empty-msg" style="color:var(--success)">All settled up!</p>';
-        else results.innerHTML = html;
+        sList.innerHTML = html || '<p style="text-align:center;color:green">Settled up!</p>';
     }
 </script>
-
 </body>
 </html>
