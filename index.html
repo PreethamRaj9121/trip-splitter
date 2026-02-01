@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Splitter Pro</title>
+    <title>Trip Splitter Pro - Enhanced</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -468,6 +468,14 @@
             background: var(--danger);
             color: white;
         }
+
+        .share-btn.info {
+            background: var(--info);
+        }
+
+        .share-btn.info:hover {
+            background: #0284c7;
+        }
         
         textarea { 
             width: 100%; 
@@ -485,6 +493,36 @@
         textarea:focus {
             outline: none;
             border-color: var(--primary);
+        }
+
+        /* Sync Info Box */
+        .sync-info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 2px solid var(--info);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .sync-info-box h4 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sync-info-box p {
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .sync-info-box ul {
+            margin-left: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
         /* Grid & Cards */
@@ -777,6 +815,7 @@
             align-items: center;
             gap: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .settlement-item:last-child {
@@ -799,6 +838,144 @@
             font-family: 'Space Mono', monospace;
             margin-left: auto;
             font-size: 1.1rem;
+        }
+
+        /* Settlement Tracker Items */
+        .settlement-tracker-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--info);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .settlement-tracker-item.partially-settled {
+            border-left-color: var(--warning);
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        .settlement-tracker-item.fully-settled {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            opacity: 0.7;
+        }
+
+        .settlement-tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .settlement-tracker-info {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .settlement-tracker-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .partial-input {
+            width: 120px;
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .settle-btn {
+            padding: 8px 16px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .settle-btn:hover {
+            background: #059669;
+        }
+
+        .settle-btn.partial {
+            background: var(--warning);
+        }
+
+        .settle-btn.partial:hover {
+            background: #d97706;
+        }
+
+        .settle-btn.unsettled {
+            background: var(--text-muted);
+        }
+
+        .settle-btn.unsettled:hover {
+            background: var(--dark);
+        }
+
+        .settlement-progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .settlement-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #059669);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .settlement-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .settlement-status.complete {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .settlement-status.partial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .settlement-status.pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .remaining-amount {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .remaining-amount strong {
+            color: var(--warning);
+            font-family: 'Space Mono', monospace;
         }
 
         /* Payment Summary */
@@ -971,6 +1148,15 @@
 
             .trip-input-group {
                 grid-template-columns: 1fr;
+            }
+
+            .settlement-tracker-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .partial-input {
+                width: 100%;
             }
         }
 
@@ -1147,23 +1333,24 @@
             <button class="share-btn secondary" onclick="downloadCurrentTripJSON()">
                 <i class="fa-solid fa-download"></i> Download JSON
             </button>
-            <button class="share-btn danger" onclick="resetCurrentTrip()">
-                <i class="fa-solid fa-trash-can"></i> Clear Data
+            <button class="share-btn info" onclick="toggleSyncInfo()">
+                <i class="fa-solid fa-circle-info"></i> Sync Guide
             </button>
         </div>
         
+        <!-- Import Area -->
         <div id="importArea" style="display:none;">
             <div style="margin-bottom: 10px;">
                 <label style="font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; display: block;">Import Options:</label>
                 <div class="toggle-buttons" style="margin-bottom: 10px;">
                     <button class="toggle-btn active" id="importCurrentBtn" onclick="setImportMode('current')">
-                        <i class="fa-solid fa-file-import"></i> Replace Current Trip
+                        <i class="fa-solid fa-file-import"></i> Replace Current
                     </button>
                     <button class="toggle-btn" id="importNewBtn" onclick="setImportMode('new')">
-                        <i class="fa-solid fa-folder-plus"></i> Create New Trip
+                        <i class="fa-solid fa-folder-plus"></i> New Trip
                     </button>
                     <button class="toggle-btn" id="importAllBtn" onclick="setImportMode('all')">
-                        <i class="fa-solid fa-layer-group"></i> Import All Trips
+                        <i class="fa-solid fa-layer-group"></i> All Trips
                     </button>
                 </div>
             </div>
@@ -1171,6 +1358,31 @@
             <button class="share-btn" style="background:var(--success); width:100%; margin-top: 10px;" onclick="importData()">
                 <i class="fa-solid fa-file-import"></i> Import Data
             </button>
+        </div>
+
+        <!-- Sync Info -->
+        <div id="syncInfo" class="sync-info-box" style="display:none;">
+            <h4><i class="fa-solid fa-lightbulb"></i> How to Sync with Friends</h4>
+            <p><strong>Current Workflow (Manual Sync):</strong></p>
+            <ul>
+                <li>Each person maintains their own copy of trip data</li>
+                <li>When someone adds expense → Copy trip code → Share via WhatsApp/Telegram</li>
+                <li>Friends paste code → Import to update their copy</li>
+                <li>Works offline, no account needed, full privacy</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>💡 Pro Tips:</strong></p>
+            <ul>
+                <li><strong>Assign one person as "Trip Manager"</strong> - They add all expenses and share updates</li>
+                <li><strong>Set sync schedule</strong> - Share code after dinner, at end of day, etc.</li>
+                <li><strong>Use group chat</strong> - Pin the latest trip code in your group</li>
+                <li><strong>Quick updates</strong> - Small expenses can be added in batch later</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>🚀 Future Enhancement Ideas:</strong></p>
+            <ul>
+                <li>Real-time sync via cloud (requires backend server)</li>
+                <li>QR code sharing for quick syncs</li>
+                <li>Auto-sync via browser notifications</li>
+            </ul>
         </div>
     </div>
 
@@ -1254,6 +1466,17 @@
                 </div>
             </div>
 
+            <!-- Partial Settlement Tracker -->
+            <div class="card" style="margin-bottom: 20px; border: 3px solid var(--info);">
+                <h2><i class="fa-solid fa-money-bill-transfer"></i> Track Settlements</h2>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 15px;">Mark payments as you settle them to track remaining balance</p>
+                
+                <div id="settlementTracker"></div>
+                
+                <!-- Settlement Progress -->
+                <div id="settlementProgress" style="margin-top: 20px;"></div>
+            </div>
+
             <!-- Payment Summary Card -->
             <div class="card payment-summary-box" style="margin-bottom: 20px;">
                 <h2><i class="fa-solid fa-wallet"></i> Payment Summary</h2>
@@ -1295,17 +1518,17 @@
     let trips = JSON.parse(localStorage.getItem('all_trips')) || [];
     let currentTripId = localStorage.getItem('current_trip_id') || null;
     let currentSettlementView = 'simplified';
-    let importMode = 'current'; // 'current', 'new', or 'all'
+    let importMode = 'current';
 
-    // Current trip data (backwards compatible)
+    // Current trip data
     let friends = [];
     let expenses = [];
+    let settlements = {}; // Track partial settlements: {from_to_key: {amount: paid_amount}}
 
     // --- Init ---
     initApp();
 
     function initApp() {
-        // Create default trip if none exists
         if (trips.length === 0) {
             const defaultTrip = {
                 id: 'trip_' + Date.now(),
@@ -1313,6 +1536,7 @@
                 date: new Date().toISOString().split('T')[0],
                 friends: [],
                 expenses: [],
+                settlements: {},
                 createdAt: new Date().toISOString(),
                 archived: false
             };
@@ -1321,7 +1545,6 @@
             saveTrips();
         }
 
-        // Set current trip if not set
         if (!currentTripId && trips.length > 0) {
             currentTripId = trips[0].id;
             localStorage.setItem('current_trip_id', currentTripId);
@@ -1337,6 +1560,7 @@
         if (trip) {
             friends = trip.friends || [];
             expenses = trip.expenses || [];
+            settlements = trip.settlements || {};
         }
     }
 
@@ -1345,6 +1569,7 @@
         if (tripIndex !== -1) {
             trips[tripIndex].friends = friends;
             trips[tripIndex].expenses = expenses;
+            trips[tripIndex].settlements = settlements;
             trips[tripIndex].updatedAt = new Date().toISOString();
             saveTrips();
         }
@@ -1365,7 +1590,6 @@
                 </option>`
             ).join('');
 
-        // Update current trip badge
         const trip = trips.find(t => t.id === currentTripId);
         const badge = document.getElementById('currentTripInfo');
         if (trip) {
@@ -1403,6 +1627,7 @@
             date: date,
             friends: [],
             expenses: [],
+            settlements: {},
             createdAt: new Date().toISOString(),
             archived: false
         };
@@ -1447,18 +1672,17 @@
             trip.archived = true;
             saveTrips();
 
-            // Switch to another active trip or create new one
             const activeTrips = trips.filter(t => !t.archived);
             if (activeTrips.length > 0) {
                 currentTripId = activeTrips[0].id;
             } else {
-                // Create a new trip if none active
                 const newTrip = {
                     id: 'trip_' + Date.now(),
                     name: 'New Trip',
                     date: new Date().toISOString().split('T')[0],
                     friends: [],
                     expenses: [],
+                    settlements: {},
                     createdAt: new Date().toISOString(),
                     archived: false
                 };
@@ -1479,7 +1703,6 @@
         const modal = document.getElementById('tripsModal');
         const container = document.getElementById('tripsListContainer');
         
-        // Sort trips: active first, then archived, both by date
         const sortedTrips = [...trips].sort((a, b) => {
             if (a.archived !== b.archived) return a.archived ? 1 : -1;
             return new Date(b.createdAt) - new Date(a.createdAt);
@@ -1563,7 +1786,7 @@
                 }
             }
             
-            openTripsModal(); // Refresh modal
+            openTripsModal();
             showToast(`"${trip.name}" archived`, 'success');
         }
     }
@@ -1572,7 +1795,7 @@
         const trip = trips.find(t => t.id === tripId);
         trip.archived = false;
         saveTrips();
-        openTripsModal(); // Refresh modal
+        openTripsModal();
         showToast(`"${trip.name}" restored!`, 'success');
     }
 
@@ -1589,13 +1812,13 @@
                 } else if (trips.length > 0) {
                     currentTripId = trips[0].id;
                 } else {
-                    // Create new trip
                     const newTrip = {
                         id: 'trip_' + Date.now(),
                         name: 'New Trip',
                         date: new Date().toISOString().split('T')[0],
                         friends: [],
                         expenses: [],
+                        settlements: {},
                         createdAt: new Date().toISOString(),
                         archived: false
                     };
@@ -1609,7 +1832,7 @@
                 renderAll();
             }
             
-            openTripsModal(); // Refresh modal
+            openTripsModal();
             showToast(`"${trip.name}" deleted`, 'success');
         }
     }
@@ -1632,13 +1855,11 @@
     function switchSettlementView(view) {
         currentSettlementView = view;
         
-        // Update toggle buttons
         document.querySelectorAll('.toggle-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         event.target.closest('.toggle-btn').classList.add('active');
         
-        // Update views
         document.getElementById('simplifiedView').classList.remove('active');
         document.getElementById('detailedView').classList.remove('active');
         
@@ -1653,7 +1874,6 @@
     function setImportMode(mode) {
         importMode = mode;
         
-        // Update toggle buttons
         document.getElementById('importCurrentBtn').classList.remove('active');
         document.getElementById('importNewBtn').classList.remove('active');
         document.getElementById('importAllBtn').classList.remove('active');
@@ -1672,6 +1892,11 @@
         if(e.key === 'Enter') addFriend(); 
     }
 
+    function toggleSyncInfo() {
+        const info = document.getElementById('syncInfo');
+        info.style.display = info.style.display === 'none' ? 'block' : 'none';
+    }
+
     // --- SHARE LOGIC ---
     function exportCurrentTrip() {
         const trip = trips.find(t => t.id === currentTripId);
@@ -1682,7 +1907,8 @@
             name: trip.name,
             date: trip.date,
             friends: trip.friends,
-            expenses: trip.expenses
+            expenses: trip.expenses,
+            settlements: trip.settlements
         };
         
         const dataString = btoa(JSON.stringify(tripData));
@@ -1723,9 +1949,7 @@
         try {
             const data = JSON.parse(atob(str));
             
-            // Check if it's all trips or single trip
             if (data.type === 'all') {
-                // Import all trips
                 if (importMode === 'all') {
                     if(confirm("⚠️ This will replace ALL your trips. Continue?")) {
                         trips = data.trips || [];
@@ -1745,12 +1969,11 @@
                     showToast("This is an 'All Trips' code. Please select 'Import All Trips' mode.", 'error');
                 }
             } else {
-                // Import single trip
                 if (importMode === 'current') {
-                    // Replace current trip
                     if(confirm(`Replace "${trips.find(t => t.id === currentTripId)?.name}" with imported data?`)) {
                         friends = data.friends || [];
                         expenses = data.expenses || [];
+                        settlements = data.settlements || {};
                         
                         const tripIndex = trips.findIndex(t => t.id === currentTripId);
                         if (tripIndex !== -1) {
@@ -1766,7 +1989,6 @@
                         document.getElementById('importString').value = '';
                     }
                 } else if (importMode === 'new') {
-                    // Create new trip from imported data
                     const tripName = data.name || 'Imported Trip';
                     const newTrip = {
                         id: 'trip_' + Date.now(),
@@ -1774,6 +1996,7 @@
                         date: data.date || new Date().toISOString().split('T')[0],
                         friends: data.friends || [],
                         expenses: data.expenses || [],
+                        settlements: data.settlements || {},
                         createdAt: new Date().toISOString(),
                         archived: false
                     };
@@ -1809,7 +2032,8 @@
             name: trip.name,
             date: trip.date,
             friends: trip.friends,
-            expenses: trip.expenses
+            expenses: trip.expenses,
+            settlements: trip.settlements
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1820,23 +2044,6 @@
         a.click();
         URL.revokeObjectURL(url);
         showToast("Trip JSON downloaded!", 'success');
-    }
-
-    function downloadAllTripsJSON() {
-        const data = {
-            type: 'all',
-            trips: trips,
-            exportDate: new Date().toISOString()
-        };
-        
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `all-trips-${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast("All trips JSON downloaded!", 'success');
     }
 
     // --- Quick Add Friends ---
@@ -1944,11 +2151,48 @@
 
         if(confirm(`⚠️ Clear all data from "${trip.name}"? This cannot be undone.`)) {
             friends = []; 
-            expenses = []; 
+            expenses = [];
+            settlements = {};
             saveCurrentTrip();
             renderAll();
             showToast("Trip data cleared!", 'success');
         }
+    }
+
+    // --- Settlement Tracking ---
+    function markSettlement(from, to, totalAmount, mode = 'full') {
+        const key = `${from}_${to}`;
+        
+        if (mode === 'full') {
+            settlements[key] = { amount: totalAmount, total: totalAmount };
+            showToast(`Marked: ${from} paid ${to} ₹${totalAmount.toFixed(2)}`, 'success');
+        } else if (mode === 'partial') {
+            const partialInput = document.getElementById(`partial_${key}`);
+            const partialAmount = parseFloat(partialInput.value);
+            
+            if (!partialAmount || partialAmount <= 0) {
+                showToast("Enter a valid amount!", 'error');
+                return;
+            }
+            
+            if (partialAmount > totalAmount) {
+                showToast("Cannot pay more than owed amount!", 'error');
+                return;
+            }
+            
+            const current = settlements[key] || { amount: 0, total: totalAmount };
+            current.amount += partialAmount;
+            settlements[key] = current;
+            
+            showToast(`Marked partial: ${from} paid ${to} ₹${partialAmount.toFixed(2)}`, 'success');
+            partialInput.value = '';
+        } else if (mode === 'unsettle') {
+            delete settlements[key];
+            showToast(`Unmarked: ${from} → ${to}`, 'success');
+        }
+        
+        saveCurrentTrip();
+        renderAll();
     }
 
     function renderAll() {
@@ -2036,6 +2280,8 @@
         const detailedList = document.getElementById('detailedList');
         const paymentSummaryList = document.getElementById('paymentSummaryList');
         const bList = document.getElementById('breakdownList');
+        const settlementTracker = document.getElementById('settlementTracker');
+        const settlementProgress = document.getElementById('settlementProgress');
         
         if(friends.length < 2 || expenses.length === 0) {
             const emptyMsg = `
@@ -2047,6 +2293,8 @@
             simplifiedList.innerHTML = emptyMsg;
             detailedList.innerHTML = emptyMsg;
             paymentSummaryList.innerHTML = emptyMsg;
+            settlementTracker.innerHTML = emptyMsg;
+            settlementProgress.innerHTML = '';
             bList.innerHTML = `
                 <div class="empty-state">
                     <i class="fa-solid fa-chart-pie"></i>
@@ -2134,11 +2382,14 @@
         creditors.sort((a,b) => b.a - a.a);
 
         let simplifiedHTML = '';
+        let simplifiedTransactions = [];
         let i=0, j=0;
         
         while(i < debtors.length && j < creditors.length) {
             let d = debtors[i], c = creditors[j];
             let amt = Math.min(Math.abs(d.a), c.a);
+            
+            simplifiedTransactions.push({from: d.n, to: c.n, amount: amt});
             
             simplifiedHTML += `
                 <div class="settlement-item">
@@ -2193,6 +2444,103 @@
         }
         
         detailedList.innerHTML = detailedHTML;
+
+        // SETTLEMENT TRACKER
+        let trackerHTML = '';
+        let totalSettlementAmount = 0;
+        let totalSettled = 0;
+        
+        simplifiedTransactions.forEach(trans => {
+            const key = `${trans.from}_${trans.to}`;
+            const settled = settlements[key] || { amount: 0, total: trans.amount };
+            const remaining = trans.amount - settled.amount;
+            totalSettlementAmount += trans.amount;
+            totalSettled += settled.amount;
+            
+            let statusClass = '';
+            let statusText = 'Not Settled';
+            
+            if (remaining <= 0.01) {
+                statusClass = 'fully-settled';
+                statusText = 'Fully Settled ✓';
+            } else if (settled.amount > 0) {
+                statusClass = 'partially-settled';
+                statusText = 'Partially Settled';
+            }
+            
+            trackerHTML += `
+                <div class="settlement-tracker-item ${statusClass}">
+                    <div class="settlement-tracker-header">
+                        <div class="settlement-tracker-info">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <strong>${trans.from}</strong> → <strong>${trans.to}</strong>
+                            <span style="margin-left: 10px; color: var(--text-muted);">₹${trans.amount.toFixed(2)}</span>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: 600; color: ${remaining <= 0.01 ? 'var(--success)' : 'var(--warning)'};">
+                            ${statusText}
+                        </div>
+                    </div>
+                    ${remaining > 0.01 ? `
+                        <div class="remaining-amount">
+                            Remaining: <strong>₹${remaining.toFixed(2)}</strong>
+                            ${settled.amount > 0 ? `• Paid: ₹${settled.amount.toFixed(2)}` : ''}
+                        </div>
+                        <div class="settlement-tracker-controls">
+                            <input type="number" id="partial_${key}" class="partial-input" placeholder="Amount" step="0.01">
+                            <button class="settle-btn partial" onclick="markSettlement('${trans.from}', '${trans.to}', ${trans.amount}, 'partial')">
+                                <i class="fa-solid fa-coins"></i> Pay Partial
+                            </button>
+                            <button class="settle-btn" onclick="markSettlement('${trans.from}', '${trans.to}', ${trans.amount}, 'full')">
+                                <i class="fa-solid fa-check"></i> Mark Full
+                            </button>
+                            ${settled.amount > 0 ? `
+                                <button class="settle-btn unsettled" onclick="markSettlement('${trans.from}', '${trans.to}', ${trans.amount}, 'unsettle')">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset
+                                </button>
+                            ` : ''}
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 10px;">
+                            <button class="settle-btn unsettled" onclick="markSettlement('${trans.from}', '${trans.to}', ${trans.amount}, 'unsettle')">
+                                <i class="fa-solid fa-rotate-left"></i> Unmark
+                            </button>
+                        </div>
+                    `}
+                </div>`;
+        });
+        
+        settlementTracker.innerHTML = trackerHTML || '<div class="empty-state"><p>No settlements to track</p></div>';
+
+        // Settlement Progress
+        if (totalSettlementAmount > 0) {
+            const progressPercent = (totalSettled / totalSettlementAmount * 100).toFixed(1);
+            const remainingTotal = totalSettlementAmount - totalSettled;
+            
+            let statusClass = 'pending';
+            let statusText = '⏳ Settlements Pending';
+            
+            if (progressPercent >= 100) {
+                statusClass = 'complete';
+                statusText = '✅ All Settlements Complete!';
+            } else if (progressPercent > 0) {
+                statusClass = 'partial';
+                statusText = '📊 Partially Settled';
+            }
+            
+            settlementProgress.innerHTML = `
+                <div class="settlement-progress-bar">
+                    <div class="settlement-progress-fill" style="width: ${progressPercent}%">
+                        ${progressPercent}%
+                    </div>
+                </div>
+                <div class="settlement-status ${statusClass}">
+                    ${statusText} • Settled: ₹${totalSettled.toFixed(2)} / ₹${totalSettlementAmount.toFixed(2)}
+                    ${remainingTotal > 0.01 ? `• Remaining: ₹${remainingTotal.toFixed(2)}` : ''}
+                </div>
+            `;
+        } else {
+            settlementProgress.innerHTML = '';
+        }
     }
 </script>
 </body>
