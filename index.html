@@ -3,187 +3,1709 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Splitter (Detailed Stats)</title>
+    <title>Trip Splitter Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0984e3;
-            --dark: #2d3436;
-            --bg: #dfe6e9;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --dark: #1e293b;
+            --bg: #f8fafc;
             --card-bg: #ffffff;
-            --text: #2d3436;
-            --danger: #d63031;
-            --success: #00b894;
-            --warning: #fdcb6e;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: 'DM Sans', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text); 
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
         
         /* Header */
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { margin: 10px 0; color: var(--dark); }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        h1 { 
+            font-size: 2.5rem;
+            color: white;
+            margin: 10px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        h1 i {
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Trip Selector */
+        .trip-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .trip-selector h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .trip-controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .trip-select-wrapper {
+            position: relative;
+        }
+
+        #tripSelect {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #tripSelect:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .new-trip-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+        }
+
+        .new-trip-section.active {
+            display: block;
+        }
+
+        .trip-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .trip-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .trip-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .trip-btn.primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .trip-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .trip-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .trip-btn.success:hover {
+            background: #059669;
+        }
+
+        .trip-btn.secondary {
+            background: var(--text-muted);
+            color: white;
+        }
+
+        .trip-btn.secondary:hover {
+            background: var(--dark);
+        }
+
+        .trip-btn.danger-outline {
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .trip-btn.danger-outline:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Current Trip Badge */
+        .current-trip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        /* Trip Cards in Modal */
+        .trip-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trip-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .trip-card.active {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .trip-card-info h4 {
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .trip-card-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .trip-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .trip-card-btn {
+            background: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .trip-card-btn:hover {
+            background: var(--bg);
+        }
+
+        .trip-card-btn.delete:hover {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-header h3 {
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--bg);
+            color: var(--dark);
+        }
 
         /* STATS BADGES */
         .stats-container {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
+        
         .stat-badge {
-            background-color: var(--dark);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            flex: 1;
-            min-width: 140px;
-            max-width: 250px;
+            box-shadow: var(--shadow-lg);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-badge small { display: block; color: #b2bec3; font-size: 0.8rem; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px;}
-        .stat-badge span { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
-        .stat-badge.secondary span { color: var(--success); }
+
+        .stat-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-badge:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .stat-badge small { 
+            display: block; 
+            color: var(--text-muted); 
+            font-size: 0.75rem; 
+            margin-bottom: 8px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        
+        .stat-badge .stat-value { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Space Mono', monospace;
+        }
 
         /* Share Section */
-        .share-section { background: #ffeaa7; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid var(--warning); }
-        .share-btn { background: var(--primary); color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: 600; }
-        textarea { width: 100%; height: 60px; margin-top: 10px; font-family: monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; padding: 5px; }
+        .share-section { 
+            background: white;
+            padding: 25px; 
+            border-radius: 16px; 
+            margin-bottom: 30px; 
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 1s ease-out 0.4s both;
+        }
+
+        .share-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .share-btn { 
+            background: var(--primary); 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .share-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .share-btn.secondary {
+            background: var(--text-muted);
+        }
+
+        .share-btn.secondary:hover {
+            background: var(--dark);
+        }
+
+        .share-btn.danger {
+            background: transparent;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .share-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+        
+        textarea { 
+            width: 100%; 
+            min-height: 80px; 
+            margin-top: 10px; 
+            font-family: 'Space Mono', monospace; 
+            font-size: 0.85rem; 
+            border: 2px solid var(--border); 
+            border-radius: 8px; 
+            padding: 12px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
         /* Grid & Cards */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+        
+        .card { 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.6s ease-out both;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card h2 i {
+            color: var(--primary);
+        }
         
         /* Inputs */
-        input, select { width: 100%; padding: 10px; border: 1px solid #b2bec3; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        button { border:none; cursor: pointer; transition: 0.2s; border-radius: 4px;}
-        .btn-main { background: var(--primary); width: 100%; padding: 12px; font-weight: bold; color: white; }
-        .btn-add { background: var(--success); color: white; padding: 0 15px; }
+        input, select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border: 2px solid var(--border); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        button { 
+            border: none; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-main { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 100%; 
+            padding: 14px; 
+            font-weight: 700; 
+            color: white;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-main:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .btn-add { 
+            background: var(--success); 
+            color: white; 
+            padding: 12px 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
 
         /* Tags & Lists */
-        .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-        .tag { background: #f1f2f6; padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; display: flex; align-items: center; gap:5px;}
-        .expense-list { list-style: none; padding: 0; max-height: 250px; overflow-y: auto; }
-        .expense-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .tags { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
         
-        /* Settlement */
-        .settlement-box { border-left: 5px solid var(--success); background: #f0fdf4; }
-        .settlement-item { padding: 8px 0; border-bottom: 1px dashed #ccc; }
+        .tag { 
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #bae6fd;
+            padding: 8px 14px; 
+            border-radius: 20px; 
+            font-size: 0.9rem; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .tag:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tag i {
+            cursor: pointer;
+            color: var(--danger);
+            transition: transform 0.2s ease;
+        }
+
+        .tag i:hover {
+            transform: scale(1.3);
+        }
+        
+        .expense-list { 
+            list-style: none; 
+            padding: 0; 
+            max-height: 400px; 
+            overflow-y: auto;
+        }
+
+        .expense-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .expense-list::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 4px;
+        }
+
+        .expense-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .expense-item { 
+            padding: 15px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between;
+            align-items: start;
+            transition: background 0.2s ease;
+        }
+
+        .expense-item:hover {
+            background: var(--bg);
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .expense-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .expense-details {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .expense-amount-section {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .delete-btn {
+            color: var(--danger);
+            background: transparent;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+            transform: scale(1.1);
+        }
+        
+        /* Settlement - ENHANCED */
+        .settlement-box { 
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 3px solid var(--success);
+            position: relative;
+        }
+
+        .settlement-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--success);
+        }
+
+        /* Toggle Buttons */
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: var(--bg);
+        }
+        
+        .settlement-item { 
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .settlement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .settlement-item i {
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+
+        .settlement-item strong {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .settlement-amount {
+            color: var(--success);
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            margin-left: auto;
+            font-size: 1.1rem;
+        }
+
+        /* Payment Summary */
+        .payment-summary-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px solid var(--warning);
+        }
+
+        .payment-summary-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--warning);
+        }
+
+        .payment-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .payment-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .payment-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .payment-name i {
+            color: var(--warning);
+            font-size: 1.2rem;
+        }
+
+        .payment-amount {
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--warning);
+        }
         
         /* Breakdown List */
-        .breakdown-list { list-style: none; padding: 0; }
-        .breakdown-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .breakdown-item span { font-weight: bold; color: #555; }
+        .breakdown-list { 
+            list-style: none; 
+            padding: 0; 
+        }
+        
+        .breakdown-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px solid var(--border); 
+            font-size: 0.95rem;
+            align-items: center;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .breakdown-item span { 
+            font-weight: 700; 
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+        }
 
         /* Split Checkboxes */
-        .split-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 5px; margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 6px; }
-        .checkbox-lbl { font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .split-options { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 8px; 
+            margin-bottom: 15px; 
+            border: 2px solid var(--border); 
+            padding: 15px; 
+            border-radius: 8px;
+            background: var(--bg);
+        }
+        
+        .checkbox-lbl { 
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .checkbox-lbl:hover {
+            color: var(--primary);
+        }
+
+        .checkbox-lbl input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin: 0;
+            accent-color: var(--primary);
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--border);
+            margin-bottom: 15px;
+        }
+
+        /* Input Group */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .input-group input {
+            flex: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { 
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .grid { 
+                grid-template-columns: 1fr; 
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .share-btn {
+                width: 100%;
+            }
+
+            .trip-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .trip-input-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-action-btn {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast i {
+            font-size: 1.5rem;
+        }
+
+        .toast.success i {
+            color: var(--success);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        /* Hide/Show Views */
+        .view-content {
+            display: none;
+        }
+
+        .view-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1><i class="fa-solid fa-plane-departure"></i> Trip Splitter</h1>
+        <h1>
+            <i class="fa-solid fa-plane-departure"></i>
+            <span>Trip Splitter Pro</span>
+        </h1>
+    </header>
+
+    <!-- Trip Selector -->
+    <div class="trip-selector">
+        <h3><i class="fa-solid fa-folder-open"></i> Manage Trips</h3>
         
-        <!-- NEW: Detailed Stats Section -->
-        <div class="stats-container">
-            <div class="stat-badge">
-                <small>Total Trip Cost</small>
-                <span id="totalTripDisplay">₹0.00</span>
+        <div class="trip-controls">
+            <div class="trip-select-wrapper">
+                <select id="tripSelect" onchange="switchTrip()">
+                    <option value="">Select a trip...</option>
+                </select>
             </div>
-            <div class="stat-badge secondary">
-                <small>Average Cost / Person</small>
-                <span id="avgCostDisplay">₹0.00</span>
+            <button class="trip-btn primary" onclick="toggleNewTripForm()">
+                <i class="fa-solid fa-plus"></i> New Trip
+            </button>
+        </div>
+
+        <!-- New Trip Form -->
+        <div id="newTripSection" class="new-trip-section">
+            <div class="trip-input-group">
+                <div>
+                    <label for="tripName">Trip Name</label>
+                    <input type="text" id="tripName" placeholder="e.g., Goa Trip 2024">
+                </div>
+                <div>
+                    <label for="tripDate">Date</label>
+                    <input type="date" id="tripDate">
+                </div>
+            </div>
+            <div class="trip-actions">
+                <button class="trip-btn success" onclick="createTrip()">
+                    <i class="fa-solid fa-check"></i> Create Trip
+                </button>
+                <button class="trip-btn secondary" onclick="toggleNewTripForm()">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
             </div>
         </div>
-    </header>
+
+        <!-- Trip Actions -->
+        <div class="trip-actions" style="margin-top: 15px;">
+            <button class="trip-btn secondary" onclick="openTripsModal()" style="flex: 1;">
+                <i class="fa-solid fa-list"></i> View All Trips
+            </button>
+            <button class="trip-btn danger-outline" onclick="archiveCurrentTrip()">
+                <i class="fa-solid fa-box-archive"></i> Archive Current
+            </button>
+        </div>
+    </div>
+
+    <!-- Current Trip Info -->
+    <div id="currentTripInfo" style="text-align: center; margin-bottom: 20px;"></div>
+        
+    <!-- Detailed Stats Section -->
+    <div class="stats-container">
+        <div class="stat-badge">
+            <small>Total Trip Cost</small>
+            <div class="stat-value" id="totalTripDisplay">₹0.00</div>
+        </div>
+        <div class="stat-badge">
+            <small>Total Expenses</small>
+            <div class="stat-value" id="expenseCountDisplay">0</div>
+        </div>
+        <div class="stat-badge">
+            <small>People on Trip</small>
+            <div class="stat-value" id="peopleCountDisplay">0</div>
+        </div>
+        <div class="stat-badge">
+            <small>Avg Cost / Person</small>
+            <div class="stat-value" id="avgCostDisplay">₹0.00</div>
+        </div>
+    </div>
 
     <!-- Share Data -->
     <div class="share-section">
-        <div style="font-weight:bold; margin-bottom:5px;">Sync Data</div>
-        <button class="share-btn" onclick="exportData()"><i class="fa-solid fa-copy"></i> Copy Data Code</button>
-        <button class="share-btn" style="background:#636e72;" onclick="toggleImport()"><i class="fa-solid fa-paste"></i> Paste Code</button>
-        
-        <div id="importArea" style="display:none; margin-top:10px;">
-            <textarea id="importString" placeholder="Paste the code here..."></textarea>
-            <button class="share-btn" style="background:var(--success); width:100%; margin: 5px 0;" onclick="importData()">Load Data</button>
+        <h3><i class="fa-solid fa-share-nodes"></i> Sync & Share Current Trip</h3>
+        <div class="btn-group">
+            <button class="share-btn" onclick="exportCurrentTrip()">
+                <i class="fa-solid fa-copy"></i> Copy Trip Code
+            </button>
+            <button class="share-btn" onclick="exportAllTrips()">
+                <i class="fa-solid fa-folder-tree"></i> Copy All Trips
+            </button>
+            <button class="share-btn secondary" onclick="toggleImport()">
+                <i class="fa-solid fa-paste"></i> Import
+            </button>
+            <button class="share-btn secondary" onclick="downloadCurrentTripJSON()">
+                <i class="fa-solid fa-download"></i> Download JSON
+            </button>
+            <button class="share-btn danger" onclick="resetCurrentTrip()">
+                <i class="fa-solid fa-trash-can"></i> Clear Data
+            </button>
         </div>
-        <div>
-            <button class="share-btn" style="background:none; color:var(--danger); border:1px solid var(--danger); font-size:0.8rem; margin-top:10px;" onclick="resetAll()">Reset App</button>
+        
+        <div id="importArea" style="display:none;">
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; display: block;">Import Options:</label>
+                <div class="toggle-buttons" style="margin-bottom: 10px;">
+                    <button class="toggle-btn active" id="importCurrentBtn" onclick="setImportMode('current')">
+                        <i class="fa-solid fa-file-import"></i> Replace Current Trip
+                    </button>
+                    <button class="toggle-btn" id="importNewBtn" onclick="setImportMode('new')">
+                        <i class="fa-solid fa-folder-plus"></i> Create New Trip
+                    </button>
+                    <button class="toggle-btn" id="importAllBtn" onclick="setImportMode('all')">
+                        <i class="fa-solid fa-layer-group"></i> Import All Trips
+                    </button>
+                </div>
+            </div>
+            <textarea id="importString" placeholder="Paste your trip code here..."></textarea>
+            <button class="share-btn" style="background:var(--success); width:100%; margin-top: 10px;" onclick="importData()">
+                <i class="fa-solid fa-file-import"></i> Import Data
+            </button>
         </div>
     </div>
 
     <div class="grid">
         <!-- 1. Add People -->
         <div class="card">
-            <h2>1. Add People</h2>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="friendName" placeholder="Name" onkeypress="handleEnter(event)">
-                <button class="btn-add" onclick="addFriend()">Add</button>
+            <h2><i class="fa-solid fa-user-group"></i> Add People</h2>
+            <div class="input-group">
+                <input type="text" id="friendName" placeholder="Enter name" onkeypress="handleEnter(event)">
+                <button class="btn-add" onclick="addFriend()">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
             </div>
             <div id="friendsContainer" class="tags"></div>
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="quickAddFriends()">
+                    <i class="fa-solid fa-users"></i> Quick Add 4
+                </button>
+            </div>
         </div>
 
         <!-- 2. Add Expense -->
         <div class="card">
-            <h2>2. Add Expense</h2>
-            <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="amount" placeholder="₹ Amount">
-                <select id="payerSelect"><option>Select Payer</option></select>
+            <h2><i class="fa-solid fa-receipt"></i> Add Expense</h2>
+            <label for="desc">Description</label>
+            <input type="text" id="desc" placeholder="e.g., Dinner at Restaurant">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01">
+                </div>
+                <div>
+                    <label for="payerSelect">Paid By</label>
+                    <select id="payerSelect">
+                        <option value="" disabled selected>Select Payer</option>
+                    </select>
+                </div>
             </div>
             
             <label style="margin-top:10px;">Split amongst:</label>
             <div id="splitOptions" class="split-options"></div>
 
-            <button class="btn-main" onclick="addExpense()">Add Expense</button>
+            <button class="btn-main" onclick="addExpense()">
+                <i class="fa-solid fa-plus-circle"></i> Add Expense
+            </button>
         </div>
     </div>
 
     <div class="grid">
-        <!-- 3. History -->
+        <!-- 3. Expense History -->
         <div class="card">
-            <h2>History</h2>
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Expense History</h2>
             <ul id="expenseList" class="expense-list"></ul>
         </div>
         
-        <!-- 4. Settlement & Breakdown -->
+        <!-- 4. Settlement, Payment Summary & Breakdown -->
         <div>
+            <!-- Settlement Box with Toggle -->
             <div class="card settlement-box" style="margin-bottom: 20px;">
-                <h2><i class="fa-solid fa-calculator"></i> Final Settlement</h2>
-                <div id="settlementList"></div>
+                <h2><i class="fa-solid fa-handshake"></i> Settlement Plan</h2>
+                
+                <!-- Toggle Buttons -->
+                <div class="toggle-buttons">
+                    <button class="toggle-btn active" onclick="switchSettlementView('simplified')">
+                        <i class="fa-solid fa-compress"></i> Simplified
+                    </button>
+                    <button class="toggle-btn" onclick="switchSettlementView('detailed')">
+                        <i class="fa-solid fa-list"></i> Detailed
+                    </button>
+                </div>
+
+                <!-- Simplified View -->
+                <div id="simplifiedView" class="view-content active">
+                    <div id="simplifiedList"></div>
+                </div>
+
+                <!-- Detailed View -->
+                <div id="detailedView" class="view-content">
+                    <div id="detailedList"></div>
+                </div>
             </div>
 
-            <!-- NEW: Breakdown Card -->
+            <!-- Payment Summary Card -->
+            <div class="card payment-summary-box" style="margin-bottom: 20px;">
+                <h2><i class="fa-solid fa-wallet"></i> Payment Summary</h2>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 15px;">Total paid by each person from their account</p>
+                <div id="paymentSummaryList"></div>
+            </div>
+
+            <!-- Breakdown Card -->
             <div class="card">
                 <h2><i class="fa-solid fa-chart-pie"></i> Cost Breakdown</h2>
-                <p style="font-size:0.8rem; color:#888; margin-top:0;">Net share of trip cost per person</p>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 15px;">Individual share of total trip cost</p>
                 <ul id="breakdownList" class="breakdown-list"></ul>
             </div>
         </div>
     </div>
 </div>
 
+<!-- All Trips Modal -->
+<div id="tripsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-folder"></i> All Trips</h3>
+            <button class="modal-close" onclick="closeTripsModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="tripsListContainer"></div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+    <i class="fa-solid fa-check-circle"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
 <script>
     // --- State ---
-    let friends = JSON.parse(localStorage.getItem('trip_friends')) || [];
-    let expenses = JSON.parse(localStorage.getItem('trip_expenses')) || [];
+    let trips = JSON.parse(localStorage.getItem('all_trips')) || [];
+    let currentTripId = localStorage.getItem('current_trip_id') || null;
+    let currentSettlementView = 'simplified';
+    let importMode = 'current'; // 'current', 'new', or 'all'
+
+    // Current trip data (backwards compatible)
+    let friends = [];
+    let expenses = [];
 
     // --- Init ---
-    renderAll();
+    initApp();
+
+    function initApp() {
+        // Create default trip if none exists
+        if (trips.length === 0) {
+            const defaultTrip = {
+                id: 'trip_' + Date.now(),
+                name: 'My First Trip',
+                date: new Date().toISOString().split('T')[0],
+                friends: [],
+                expenses: [],
+                createdAt: new Date().toISOString(),
+                archived: false
+            };
+            trips.push(defaultTrip);
+            currentTripId = defaultTrip.id;
+            saveTrips();
+        }
+
+        // Set current trip if not set
+        if (!currentTripId && trips.length > 0) {
+            currentTripId = trips[0].id;
+            localStorage.setItem('current_trip_id', currentTripId);
+        }
+
+        loadCurrentTrip();
+        updateTripSelector();
+        renderAll();
+    }
+
+    function loadCurrentTrip() {
+        const trip = trips.find(t => t.id === currentTripId);
+        if (trip) {
+            friends = trip.friends || [];
+            expenses = trip.expenses || [];
+        }
+    }
+
+    function saveCurrentTrip() {
+        const tripIndex = trips.findIndex(t => t.id === currentTripId);
+        if (tripIndex !== -1) {
+            trips[tripIndex].friends = friends;
+            trips[tripIndex].expenses = expenses;
+            trips[tripIndex].updatedAt = new Date().toISOString();
+            saveTrips();
+        }
+    }
+
+    function saveTrips() {
+        localStorage.setItem('all_trips', JSON.stringify(trips));
+    }
+
+    function updateTripSelector() {
+        const select = document.getElementById('tripSelect');
+        const activeTrips = trips.filter(t => !t.archived);
+        
+        select.innerHTML = '<option value="">Select a trip...</option>' +
+            activeTrips.map(t => 
+                `<option value="${t.id}" ${t.id === currentTripId ? 'selected' : ''}>
+                    ${t.name} ${t.date ? '(' + new Date(t.date).toLocaleDateString() + ')' : ''}
+                </option>`
+            ).join('');
+
+        // Update current trip badge
+        const trip = trips.find(t => t.id === currentTripId);
+        const badge = document.getElementById('currentTripInfo');
+        if (trip) {
+            badge.innerHTML = `
+                <div class="current-trip-badge">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    ${trip.name}
+                    ${trip.date ? '• ' + new Date(trip.date).toLocaleDateString() : ''}
+                </div>`;
+        } else {
+            badge.innerHTML = '';
+        }
+    }
+
+    function toggleNewTripForm() {
+        const section = document.getElementById('newTripSection');
+        section.classList.toggle('active');
+        if (section.classList.contains('active')) {
+            document.getElementById('tripDate').value = new Date().toISOString().split('T')[0];
+        }
+    }
+
+    function createTrip() {
+        const name = document.getElementById('tripName').value.trim();
+        const date = document.getElementById('tripDate').value;
+
+        if (!name) {
+            showToast('Please enter a trip name!', 'error');
+            return;
+        }
+
+        const newTrip = {
+            id: 'trip_' + Date.now(),
+            name: name,
+            date: date,
+            friends: [],
+            expenses: [],
+            createdAt: new Date().toISOString(),
+            archived: false
+        };
+
+        trips.push(newTrip);
+        currentTripId = newTrip.id;
+        localStorage.setItem('current_trip_id', currentTripId);
+        
+        saveTrips();
+        loadCurrentTrip();
+        updateTripSelector();
+        renderAll();
+        
+        document.getElementById('tripName').value = '';
+        toggleNewTripForm();
+        
+        showToast(`Trip "${name}" created!`, 'success');
+    }
+
+    function switchTrip() {
+        const select = document.getElementById('tripSelect');
+        const newTripId = select.value;
+        
+        if (!newTripId) return;
+
+        currentTripId = newTripId;
+        localStorage.setItem('current_trip_id', currentTripId);
+        
+        loadCurrentTrip();
+        updateTripSelector();
+        renderAll();
+        
+        const trip = trips.find(t => t.id === currentTripId);
+        showToast(`Switched to "${trip.name}"`, 'success');
+    }
+
+    function archiveCurrentTrip() {
+        const trip = trips.find(t => t.id === currentTripId);
+        if (!trip) return;
+
+        if (confirm(`Archive "${trip.name}"? You can restore it later from All Trips.`)) {
+            trip.archived = true;
+            saveTrips();
+
+            // Switch to another active trip or create new one
+            const activeTrips = trips.filter(t => !t.archived);
+            if (activeTrips.length > 0) {
+                currentTripId = activeTrips[0].id;
+            } else {
+                // Create a new trip if none active
+                const newTrip = {
+                    id: 'trip_' + Date.now(),
+                    name: 'New Trip',
+                    date: new Date().toISOString().split('T')[0],
+                    friends: [],
+                    expenses: [],
+                    createdAt: new Date().toISOString(),
+                    archived: false
+                };
+                trips.push(newTrip);
+                currentTripId = newTrip.id;
+            }
+
+            localStorage.setItem('current_trip_id', currentTripId);
+            loadCurrentTrip();
+            updateTripSelector();
+            renderAll();
+            
+            showToast(`"${trip.name}" archived`, 'success');
+        }
+    }
+
+    function openTripsModal() {
+        const modal = document.getElementById('tripsModal');
+        const container = document.getElementById('tripsListContainer');
+        
+        // Sort trips: active first, then archived, both by date
+        const sortedTrips = [...trips].sort((a, b) => {
+            if (a.archived !== b.archived) return a.archived ? 1 : -1;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        container.innerHTML = sortedTrips.map(trip => {
+            const isActive = trip.id === currentTripId;
+            const expenseCount = (trip.expenses || []).length;
+            const peopleCount = (trip.friends || []).length;
+            
+            return `
+                <div class="trip-card ${isActive ? 'active' : ''}" onclick="selectTripFromModal('${trip.id}')">
+                    <div class="trip-card-info">
+                        <h4>
+                            ${trip.archived ? '<i class="fa-solid fa-box-archive" style="color: var(--text-muted);"></i> ' : ''}
+                            ${trip.name}
+                            ${isActive ? '<i class="fa-solid fa-check-circle" style="color: var(--success); margin-left: 8px;"></i>' : ''}
+                        </h4>
+                        <div class="trip-card-meta">
+                            <i class="fa-solid fa-calendar"></i> ${trip.date ? new Date(trip.date).toLocaleDateString() : 'No date'} •
+                            <i class="fa-solid fa-users"></i> ${peopleCount} people •
+                            <i class="fa-solid fa-receipt"></i> ${expenseCount} expenses
+                            ${trip.archived ? ' • <strong>Archived</strong>' : ''}
+                        </div>
+                    </div>
+                    <div class="trip-card-actions" onclick="event.stopPropagation()">
+                        ${trip.archived ? 
+                            `<button class="trip-card-btn" onclick="unarchiveTrip('${trip.id}')" title="Restore">
+                                <i class="fa-solid fa-box-open"></i>
+                            </button>` : 
+                            `<button class="trip-card-btn" onclick="archiveTrip('${trip.id}')" title="Archive">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </button>`
+                        }
+                        <button class="trip-card-btn delete" onclick="deleteTrip('${trip.id}')" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+        }).join('');
+
+        modal.classList.add('active');
+    }
+
+    function closeTripsModal() {
+        document.getElementById('tripsModal').classList.remove('active');
+    }
+
+    function selectTripFromModal(tripId) {
+        const trip = trips.find(t => t.id === tripId);
+        if (trip.archived) {
+            showToast('Please restore this trip first!', 'error');
+            return;
+        }
+
+        currentTripId = tripId;
+        localStorage.setItem('current_trip_id', currentTripId);
+        
+        loadCurrentTrip();
+        updateTripSelector();
+        renderAll();
+        closeTripsModal();
+        
+        showToast(`Switched to "${trip.name}"`, 'success');
+    }
+
+    function archiveTrip(tripId) {
+        const trip = trips.find(t => t.id === tripId);
+        if (confirm(`Archive "${trip.name}"?`)) {
+            trip.archived = true;
+            saveTrips();
+            
+            if (tripId === currentTripId) {
+                const activeTrips = trips.filter(t => !t.archived);
+                if (activeTrips.length > 0) {
+                    currentTripId = activeTrips[0].id;
+                    localStorage.setItem('current_trip_id', currentTripId);
+                    loadCurrentTrip();
+                    updateTripSelector();
+                    renderAll();
+                }
+            }
+            
+            openTripsModal(); // Refresh modal
+            showToast(`"${trip.name}" archived`, 'success');
+        }
+    }
+
+    function unarchiveTrip(tripId) {
+        const trip = trips.find(t => t.id === tripId);
+        trip.archived = false;
+        saveTrips();
+        openTripsModal(); // Refresh modal
+        showToast(`"${trip.name}" restored!`, 'success');
+    }
+
+    function deleteTrip(tripId) {
+        const trip = trips.find(t => t.id === tripId);
+        if (confirm(`⚠️ Permanently delete "${trip.name}"? This cannot be undone!`)) {
+            trips = trips.filter(t => t.id !== tripId);
+            saveTrips();
+            
+            if (tripId === currentTripId) {
+                const activeTrips = trips.filter(t => !t.archived);
+                if (activeTrips.length > 0) {
+                    currentTripId = activeTrips[0].id;
+                } else if (trips.length > 0) {
+                    currentTripId = trips[0].id;
+                } else {
+                    // Create new trip
+                    const newTrip = {
+                        id: 'trip_' + Date.now(),
+                        name: 'New Trip',
+                        date: new Date().toISOString().split('T')[0],
+                        friends: [],
+                        expenses: [],
+                        createdAt: new Date().toISOString(),
+                        archived: false
+                    };
+                    trips.push(newTrip);
+                    currentTripId = newTrip.id;
+                }
+                
+                localStorage.setItem('current_trip_id', currentTripId);
+                loadCurrentTrip();
+                updateTripSelector();
+                renderAll();
+            }
+            
+            openTripsModal(); // Refresh modal
+            showToast(`"${trip.name}" deleted`, 'success');
+        }
+    }
+
+    // --- Toast Notification ---
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const icon = toast.querySelector('i');
+        
+        toast.className = `toast ${type}`;
+        icon.className = type === 'success' ? 'fa-solid fa-check-circle' : 'fa-solid fa-exclamation-circle';
+        toastMessage.textContent = message;
+        
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // --- Settlement View Toggle ---
+    function switchSettlementView(view) {
+        currentSettlementView = view;
+        
+        // Update toggle buttons
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.closest('.toggle-btn').classList.add('active');
+        
+        // Update views
+        document.getElementById('simplifiedView').classList.remove('active');
+        document.getElementById('detailedView').classList.remove('active');
+        
+        if(view === 'simplified') {
+            document.getElementById('simplifiedView').classList.add('active');
+        } else {
+            document.getElementById('detailedView').classList.add('active');
+        }
+    }
+
+    // --- Import Mode Toggle ---
+    function setImportMode(mode) {
+        importMode = mode;
+        
+        // Update toggle buttons
+        document.getElementById('importCurrentBtn').classList.remove('active');
+        document.getElementById('importNewBtn').classList.remove('active');
+        document.getElementById('importAllBtn').classList.remove('active');
+        
+        if (mode === 'current') {
+            document.getElementById('importCurrentBtn').classList.add('active');
+        } else if (mode === 'new') {
+            document.getElementById('importNewBtn').classList.add('active');
+        } else if (mode === 'all') {
+            document.getElementById('importAllBtn').classList.add('active');
+        }
+    }
 
     // --- Helpers ---
-    function handleEnter(e) { if(e.key === 'Enter') addFriend(); }
+    function handleEnter(e) { 
+        if(e.key === 'Enter') addFriend(); 
+    }
 
     // --- SHARE LOGIC ---
-    function exportData() {
-        const dataString = btoa(JSON.stringify({ friends, expenses }));
-        navigator.clipboard.writeText(dataString).then(() => alert("Data Code Copied! Send this to your friends."));
+    function exportCurrentTrip() {
+        const trip = trips.find(t => t.id === currentTripId);
+        if (!trip) return;
+
+        const tripData = {
+            type: 'single',
+            name: trip.name,
+            date: trip.date,
+            friends: trip.friends,
+            expenses: trip.expenses
+        };
+        
+        const dataString = btoa(JSON.stringify(tripData));
+        navigator.clipboard.writeText(dataString).then(() => {
+            showToast(`"${trip.name}" code copied! Share with friends.`, 'success');
+        }).catch(() => {
+            showToast("Failed to copy. Please try again.", 'error');
+        });
+    }
+
+    function exportAllTrips() {
+        const allTripsData = {
+            type: 'all',
+            trips: trips,
+            exportDate: new Date().toISOString()
+        };
+        
+        const dataString = btoa(JSON.stringify(allTripsData));
+        navigator.clipboard.writeText(dataString).then(() => {
+            showToast("All trips code copied! This includes all your trips.", 'success');
+        }).catch(() => {
+            showToast("Failed to copy. Please try again.", 'error');
+        });
     }
 
     function toggleImport() {
@@ -193,70 +1715,240 @@
 
     function importData() {
         const str = document.getElementById('importString').value.trim();
-        if(!str) return alert("Paste a code first");
+        if(!str) {
+            showToast("Please paste a code first!", 'error');
+            return;
+        }
+        
         try {
             const data = JSON.parse(atob(str));
-            if(confirm("Overwrite current data?")) {
-                friends = data.friends || [];
-                expenses = data.expenses || [];
-                saveAndRender();
-                alert("Data Loaded!");
-                document.getElementById('importArea').style.display = 'none';
-                document.getElementById('importString').value = '';
+            
+            // Check if it's all trips or single trip
+            if (data.type === 'all') {
+                // Import all trips
+                if (importMode === 'all') {
+                    if(confirm("⚠️ This will replace ALL your trips. Continue?")) {
+                        trips = data.trips || [];
+                        if (trips.length > 0) {
+                            currentTripId = trips[0].id;
+                            localStorage.setItem('current_trip_id', currentTripId);
+                        }
+                        saveTrips();
+                        loadCurrentTrip();
+                        updateTripSelector();
+                        renderAll();
+                        showToast(`${trips.length} trips imported successfully!`, 'success');
+                        document.getElementById('importArea').style.display = 'none';
+                        document.getElementById('importString').value = '';
+                    }
+                } else {
+                    showToast("This is an 'All Trips' code. Please select 'Import All Trips' mode.", 'error');
+                }
+            } else {
+                // Import single trip
+                if (importMode === 'current') {
+                    // Replace current trip
+                    if(confirm(`Replace "${trips.find(t => t.id === currentTripId)?.name}" with imported data?`)) {
+                        friends = data.friends || [];
+                        expenses = data.expenses || [];
+                        
+                        const tripIndex = trips.findIndex(t => t.id === currentTripId);
+                        if (tripIndex !== -1) {
+                            if (data.name) trips[tripIndex].name = data.name;
+                            if (data.date) trips[tripIndex].date = data.date;
+                        }
+                        
+                        saveCurrentTrip();
+                        updateTripSelector();
+                        renderAll();
+                        showToast("Current trip replaced with imported data!", 'success');
+                        document.getElementById('importArea').style.display = 'none';
+                        document.getElementById('importString').value = '';
+                    }
+                } else if (importMode === 'new') {
+                    // Create new trip from imported data
+                    const tripName = data.name || 'Imported Trip';
+                    const newTrip = {
+                        id: 'trip_' + Date.now(),
+                        name: tripName,
+                        date: data.date || new Date().toISOString().split('T')[0],
+                        friends: data.friends || [],
+                        expenses: data.expenses || [],
+                        createdAt: new Date().toISOString(),
+                        archived: false
+                    };
+                    
+                    trips.push(newTrip);
+                    currentTripId = newTrip.id;
+                    localStorage.setItem('current_trip_id', currentTripId);
+                    
+                    saveTrips();
+                    loadCurrentTrip();
+                    updateTripSelector();
+                    renderAll();
+                    
+                    showToast(`New trip "${tripName}" created from import!`, 'success');
+                    document.getElementById('importArea').style.display = 'none';
+                    document.getElementById('importString').value = '';
+                } else {
+                    showToast("Please select an import mode.", 'error');
+                }
             }
-        } catch (e) { alert("Invalid Code."); }
+        } catch (e) { 
+            console.error(e);
+            showToast("Invalid code. Please check and try again.", 'error');
+        }
+    }
+
+    function downloadCurrentTripJSON() {
+        const trip = trips.find(t => t.id === currentTripId);
+        if (!trip) return;
+
+        const data = {
+            type: 'single',
+            name: trip.name,
+            date: trip.date,
+            friends: trip.friends,
+            expenses: trip.expenses
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${trip.name.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Trip JSON downloaded!", 'success');
+    }
+
+    function downloadAllTripsJSON() {
+        const data = {
+            type: 'all',
+            trips: trips,
+            exportDate: new Date().toISOString()
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `all-trips-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("All trips JSON downloaded!", 'success');
+    }
+
+    // --- Quick Add Friends ---
+    function quickAddFriends() {
+        const names = ['Alice', 'Bob', 'Charlie', 'Diana'];
+        names.forEach(name => {
+            if(!friends.includes(name)) {
+                friends.push(name);
+            }
+        });
+        saveCurrentTrip();
+        renderAll();
+        showToast("Quick added 4 friends!", 'success');
     }
 
     // --- APP LOGIC ---
     function addFriend() {
         const name = document.getElementById('friendName').value.trim();
-        if(name && !friends.includes(name)) {
-            friends.push(name);
-            document.getElementById('friendName').value = '';
-            saveAndRender();
+        if(!name) {
+            showToast("Please enter a name!", 'error');
+            return;
         }
+        
+        if(friends.includes(name)) {
+            showToast("This person is already added!", 'error');
+            return;
+        }
+        
+        friends.push(name);
+        document.getElementById('friendName').value = '';
+        saveCurrentTrip();
+        renderAll();
+        showToast(`${name} added to the trip!`, 'success');
     }
 
     function removeFriend(name) {
-        if(confirm(`Remove ${name}?`)) {
+        if(confirm(`Remove ${name} from the trip? Their expenses will be removed too.`)) {
             friends = friends.filter(f => f !== name);
-            saveAndRender();
+            expenses = expenses.filter(e => e.payer !== name);
+            saveCurrentTrip();
+            renderAll();
+            showToast(`${name} removed from trip.`, 'success');
         }
     }
 
     function addExpense() {
-        const desc = document.getElementById('desc').value;
+        const desc = document.getElementById('desc').value.trim();
         const amount = parseFloat(document.getElementById('amount').value);
         const payer = document.getElementById('payerSelect').value;
         const involved = [];
-        document.querySelectorAll('.split-chk').forEach(cb => { if(cb.checked) involved.push(cb.value); });
+        
+        document.querySelectorAll('.split-chk').forEach(cb => { 
+            if(cb.checked) involved.push(cb.value); 
+        });
 
-        if(!desc || !amount || !payer) return alert("Please fill details");
-        if(involved.length === 0) return alert("Select at least 1 person");
+        if(!desc) {
+            showToast("Please enter a description!", 'error');
+            return;
+        }
+        
+        if(!amount || amount <= 0) {
+            showToast("Please enter a valid amount!", 'error');
+            return;
+        }
+        
+        if(!payer) {
+            showToast("Please select who paid!", 'error');
+            return;
+        }
+        
+        if(involved.length === 0) {
+            showToast("Select at least 1 person to split with!", 'error');
+            return;
+        }
 
-        expenses.push({ id: Date.now(), desc, amount, payer, involved, date: new Date().toLocaleDateString() });
+        expenses.push({ 
+            id: Date.now(), 
+            desc, 
+            amount, 
+            payer, 
+            involved, 
+            date: new Date().toLocaleDateString() 
+        });
         
         document.getElementById('desc').value = '';
         document.getElementById('amount').value = '';
         document.querySelectorAll('.split-chk').forEach(cb => cb.checked = true);
-        saveAndRender();
+        saveCurrentTrip();
+        renderAll();
+        showToast(`Expense "${desc}" added!`, 'success');
     }
 
     function removeExpense(id) {
-        if(confirm("Delete expense?")) {
+        if(confirm("Delete this expense?")) {
             expenses = expenses.filter(e => e.id !== id);
-            saveAndRender();
+            saveCurrentTrip();
+            renderAll();
+            showToast("Expense deleted.", 'success');
         }
     }
 
-    function resetAll() {
-        if(confirm("Clear All Data?")) { friends = []; expenses = []; saveAndRender(); }
-    }
+    function resetCurrentTrip() {
+        const trip = trips.find(t => t.id === currentTripId);
+        if (!trip) return;
 
-    function saveAndRender() {
-        localStorage.setItem('trip_friends', JSON.stringify(friends));
-        localStorage.setItem('trip_expenses', JSON.stringify(expenses));
-        renderAll();
+        if(confirm(`⚠️ Clear all data from "${trip.name}"? This cannot be undone.`)) {
+            friends = []; 
+            expenses = []; 
+            saveCurrentTrip();
+            renderAll();
+            showToast("Trip data cleared!", 'success');
+        }
     }
 
     function renderAll() {
@@ -266,12 +1958,22 @@
 
         document.getElementById('totalTripDisplay').innerText = `₹${totalCost.toFixed(2)}`;
         document.getElementById('avgCostDisplay').innerText = `₹${avgCost.toFixed(2)}`;
+        document.getElementById('expenseCountDisplay').innerText = expenses.length;
+        document.getElementById('peopleCountDisplay').innerText = friends.length;
 
         // 2. Friends Tags
         const fContainer = document.getElementById('friendsContainer');
-        fContainer.innerHTML = friends.map(f => 
-            `<div class="tag">${f} <i class="fa-solid fa-times" onclick="removeFriend('${f}')" style="cursor:pointer"></i></div>`
-        ).join('');
+        if(friends.length === 0) {
+            fContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px; font-size: 0.9rem;">No people added yet. Add someone to start!</div>';
+        } else {
+            fContainer.innerHTML = friends.map(f => 
+                `<div class="tag">
+                    <i class="fa-solid fa-user"></i>
+                    ${f} 
+                    <i class="fa-solid fa-xmark" onclick="removeFriend('${f}')"></i>
+                </div>`
+            ).join('');
+        }
 
         // 3. Payer Select
         const pSelect = document.getElementById('payerSelect');
@@ -284,40 +1986,84 @@
         const sOptions = document.getElementById('splitOptions');
         if(friends.length > 0) {
             sOptions.innerHTML = friends.map(f => 
-                `<label class="checkbox-lbl"><input type="checkbox" class="split-chk" value="${f}" checked>${f}</label>`
+                `<label class="checkbox-lbl">
+                    <input type="checkbox" class="split-chk" value="${f}" checked>
+                    ${f}
+                </label>`
             ).join('');
         } else {
-            sOptions.innerHTML = '<small style="color:#888">Add friends first</small>';
+            sOptions.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 10px;">Add people first</div>';
         }
 
         // 5. Expense List
         const eList = document.getElementById('expenseList');
-        eList.innerHTML = expenses.length ? '' : '<p style="text-align:center;color:#999">No expenses</p>';
-        expenses.slice().reverse().forEach(e => {
-            const count = (e.involved || friends).length;
-            eList.innerHTML += `
-                <li class="expense-item">
-                    <div><b>${e.desc}</b> <br> <small style="color:#777">Paid by ${e.payer} • ${count} ppl</small></div>
-                    <div style="text-align:right"><b>₹${e.amount}</b> <br> <i class="fa-solid fa-trash" style="color:#e17055; cursor:pointer" onclick="removeExpense(${e.id})"></i></div>
-                </li>`;
-        });
+        if(expenses.length === 0) {
+            eList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No expenses yet. Start adding!</p>
+                </div>`;
+        } else {
+            eList.innerHTML = '';
+            expenses.slice().reverse().forEach(e => {
+                const count = (e.involved || friends).length;
+                const li = document.createElement('li');
+                li.className = 'expense-item';
+                li.innerHTML = `
+                    <div class="expense-meta">
+                        <div class="expense-title">${e.desc}</div>
+                        <div class="expense-details">
+                            <i class="fa-solid fa-user"></i> ${e.payer} paid • 
+                            <i class="fa-solid fa-users"></i> Split ${count} ways • 
+                            <i class="fa-solid fa-calendar"></i> ${e.date}
+                        </div>
+                    </div>
+                    <div class="expense-amount-section">
+                        <div class="expense-amount">₹${e.amount.toFixed(2)}</div>
+                        <button class="delete-btn" onclick="removeExpense(${e.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>`;
+                eList.appendChild(li);
+            });
+        }
 
         calculateSplit();
     }
 
     function calculateSplit() {
-        const sList = document.getElementById('settlementList');
+        const simplifiedList = document.getElementById('simplifiedList');
+        const detailedList = document.getElementById('detailedList');
+        const paymentSummaryList = document.getElementById('paymentSummaryList');
         const bList = document.getElementById('breakdownList');
         
         if(friends.length < 2 || expenses.length === 0) {
-            sList.innerHTML = '<p style="text-align:center;color:#999">Add data to calculate</p>';
-            bList.innerHTML = '<p style="text-align:center;color:#999">No data</p>';
+            const emptyMsg = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <p>Add people and expenses to see settlement</p>
+                </div>`;
+            
+            simplifiedList.innerHTML = emptyMsg;
+            detailedList.innerHTML = emptyMsg;
+            paymentSummaryList.innerHTML = emptyMsg;
+            bList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <p>No data to show yet</p>
+                </div>`;
             return;
         }
 
         let balances = {};
-        let spending = {}; // New: Track actual consumption
-        friends.forEach(f => { balances[f] = 0; spending[f] = 0; });
+        let spending = {};
+        let totalPaid = {};
+        
+        friends.forEach(f => { 
+            balances[f] = 0; 
+            spending[f] = 0; 
+            totalPaid[f] = 0;
+        });
 
         expenses.forEach(e => {
             if(balances[e.payer] === undefined) return;
@@ -326,45 +2072,127 @@
             
             const split = e.amount / involved.length;
 
-            balances[e.payer] += e.amount; // Payer Paid
+            balances[e.payer] += e.amount;
+            totalPaid[e.payer] += e.amount;
             
             involved.forEach(p => {
-                balances[p] -= split; // Person owes this amount
-                spending[p] += split; // Person "consumed" this amount
+                balances[p] -= split;
+                spending[p] += split;
             });
         });
 
+        // Render Payment Summary
+        let paymentHTML = '';
+        const sortedPayments = Object.entries(totalPaid).sort((a, b) => b[1] - a[1]);
+        
+        for(const [person, amount] of sortedPayments) {
+            if(amount > 0) {
+                paymentHTML += `
+                    <div class="payment-item">
+                        <div class="payment-name">
+                            <i class="fa-solid fa-credit-card"></i>
+                            ${person}
+                        </div>
+                        <div class="payment-amount">₹${amount.toFixed(2)}</div>
+                    </div>`;
+            }
+        }
+        
+        if(paymentHTML === '') {
+            paymentSummaryList.innerHTML = '<div class="empty-state"><p>No payments recorded yet</p></div>';
+        } else {
+            paymentSummaryList.innerHTML = paymentHTML;
+        }
+
         // Render Breakdown
         let breakdownHTML = '';
-        for(const f of friends) {
+        const sortedSpending = Object.entries(spending).sort((a, b) => b[1] - a[1]);
+        
+        for(const [f, amount] of sortedSpending) {
+            const percentage = ((amount / Object.values(spending).reduce((a, b) => a + b, 0)) * 100).toFixed(1);
             breakdownHTML += `
                 <li class="breakdown-item">
-                    ${f} <span>₹${spending[f].toFixed(2)}</span>
+                    <div class="breakdown-name">
+                        <i class="fa-solid fa-circle-user"></i> ${f}
+                        <small style="color: var(--text-muted); margin-left: 8px;">${percentage}%</small>
+                    </div>
+                    <span>₹${amount.toFixed(2)}</span>
                 </li>`;
         }
         bList.innerHTML = breakdownHTML;
 
-        // Render Settlement
+        // Calculate settlements
         let debtors = [], creditors = [];
         for(const p in balances) {
             let val = Math.round(balances[p]*100)/100;
             if(val < -0.01) debtors.push({n:p, a:val});
             if(val > 0.01) creditors.push({n:p, a:val});
         }
+        
+        // SIMPLIFIED SETTLEMENT
         debtors.sort((a,b) => a.a - b.a);
         creditors.sort((a,b) => b.a - a.a);
 
-        let html = '';
+        let simplifiedHTML = '';
         let i=0, j=0;
+        
         while(i < debtors.length && j < creditors.length) {
             let d = debtors[i], c = creditors[j];
             let amt = Math.min(Math.abs(d.a), c.a);
-            html += `<div class="settlement-item"><strong>${d.n}</strong> owes <span style="color:var(--success)">${c.n}</span> <b>₹${amt.toFixed(2)}</b></div>`;
+            
+            simplifiedHTML += `
+                <div class="settlement-item">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <strong>${d.n}</strong> owes <strong>${c.n}</strong>
+                    <span class="settlement-amount">₹${amt.toFixed(2)}</span>
+                </div>`;
+            
             d.a += amt; c.a -= amt;
             if(Math.abs(d.a)<0.01) i++;
             if(c.a < 0.01) j++;
         }
-        sList.innerHTML = html || '<p style="text-align:center;color:green">Settled up!</p>';
+        
+        if(simplifiedHTML === '') {
+            simplifiedHTML = `
+                <div class="empty-state" style="padding: 20px;">
+                    <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                    <p style="color: var(--success); font-weight: 600;">All settled up! 🎉</p>
+                </div>`;
+        }
+        
+        simplifiedList.innerHTML = simplifiedHTML;
+
+        // DETAILED SETTLEMENT
+        let detailedHTML = '';
+        
+        expenses.forEach(e => {
+            const involved = (e.involved || friends).filter(p => friends.includes(p));
+            if(involved.length === 0) return;
+            
+            const split = e.amount / involved.length;
+            
+            involved.forEach(p => {
+                if(p !== e.payer) {
+                    detailedHTML += `
+                        <div class="settlement-item">
+                            <i class="fa-solid fa-receipt"></i>
+                            <strong>${p}</strong> owes <strong>${e.payer}</strong>
+                            <span class="settlement-amount">₹${split.toFixed(2)}</span>
+                            <small style="color: var(--text-muted); margin-left: 10px; font-size: 0.8rem;">${e.desc}</small>
+                        </div>`;
+                }
+            });
+        });
+        
+        if(detailedHTML === '') {
+            detailedHTML = `
+                <div class="empty-state" style="padding: 20px;">
+                    <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                    <p style="color: var(--success); font-weight: 600;">All settled up! 🎉</p>
+                </div>`;
+        }
+        
+        detailedList.innerHTML = detailedHTML;
     }
 </script>
 </body>
